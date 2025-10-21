@@ -13,7 +13,7 @@ services:
     restart: always
 
   master_server:
-    build: ./master_server
+    build: master-server:latest
     container_name: master_server
     environment:
       - DB_HOST=db_master
@@ -29,3 +29,4 @@ services:
 
 volumes:
   master_db_data:
+
