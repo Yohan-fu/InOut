@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db_master:
+    image: postgres:15
+    container_name: db_master
+    environment:
+      POSTGRES_USER: master
+      POSTGRES_PASSWORD: master123
+      POSTGRES_DB: visitors_master
+    volumes:
+      - master_db_data:/var/lib/postgresql/data
+    restart: always
+
+  master_server:
+    build: ./master_server
+    container_name: master_server
+    environment:
+      - DB_HOST=db_master
+      - DB_NAME=visitors_master
+      - DB_USER=master
+      - DB_PASSWORD=master123
+      - DJANGO_SECRET_KEY=dev-secret-master
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_master
+    restart: always
+
+volumes:
+  master_db_data:

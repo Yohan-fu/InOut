@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db_child:
+    image: postgres:15
+    container_name: db_child
+    environment:
+      POSTGRES_USER: child
+      POSTGRES_PASSWORD: child123
+      POSTGRES_DB: visitors_child
+    volumes:
+      - child_db_data:/var/lib/postgresql/data
+    restart: always
+
+  child_server:
+    build: ./child_server
+    container_name: child_server
+    environment:
+      - DB_HOST=db_child
+      - DB_NAME=visitors_child
+      - DB_USER=child
+      - DB_PASSWORD=child123
+      - DJANGO_SECRET_KEY=dev-secret-child
+      # ⚠️ à modifier selon ton serveur maître :
+      - MASTER_API_URL=http://192.168.1.10:8000/api/
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db_child
+    restart: always
+
+volumes:
+  child_db_data:
